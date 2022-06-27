@@ -30,25 +30,22 @@ class BundleIdLaunchPlugin: FlutterPlugin, MethodCallHandler {
     when (call.method) {
       "getPlatformVersion" -> {
         result.success("Android ${android.os.Build.VERSION.RELEASE}")
-        return
       }
       "launch" -> {
         val bundleId = call.arguments as String?
         if (bundleId != null){
           val res = launchByBundleId(bundleId)
           result.success(res)
-          return
+        }else{
+          result.success(false)
         }
-        result.success(false)
       }
       "openSystemSetting" -> {
         try {
           openSystemSetting()
           result.success(true)
-          return
         } catch (e: Exception) {
           result.success(false)
-          return
         }
       }
       else -> {
