@@ -1,18 +1,15 @@
 package com.mushi.bundle_id_launch
 
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
+import android.provider.Settings
 import androidx.annotation.NonNull
-import androidx.annotation.Nullable
-
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
-import java.lang.Exception
 
 /** BundleIdLaunchPlugin */
 class BundleIdLaunchPlugin: FlutterPlugin, MethodCallHandler {
@@ -33,25 +30,30 @@ class BundleIdLaunchPlugin: FlutterPlugin, MethodCallHandler {
     when (call.method) {
       "getPlatformVersion" -> {
         result.success("Android ${android.os.Build.VERSION.RELEASE}")
+        return
       }
       "launch" -> {
         val bundleId = call.arguments as String?
-        bundleId?.let {
-          val res = launchByBundleId(it)
+        if (bundleId != null){
+          val res = launchByBundleId(bundleId)
           result.success(res)
-        };
+          return
+        }
         result.success(false)
       }
       "openSystemSetting" -> {
         try {
           openSystemSetting()
           result.success(true)
+          return
         } catch (e: Exception) {
           result.success(false)
+          return
         }
       }
       else -> {
         result.notImplemented()
+        return
       }
     }
   }
@@ -75,11 +77,17 @@ class BundleIdLaunchPlugin: FlutterPlugin, MethodCallHandler {
       }
     } else {
       return false
-//            TODO("VERSION.SDK_INT < LOLLIPOP")
     }
   }
   private fun openSystemSetting(){
     val context = this.binding.applicationContext
-    context.startActivity(Intent(android.provider.Settings.ACTION_SETTINGS));
+    val settingsIntent = Intent()
+    settingsIntent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+    settingsIntent.addCategory(Intent.CATEGORY_DEFAULT)
+    settingsIntent.data = Uri.parse("package:" + context.packageName)
+    settingsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    settingsIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+    settingsIntent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
+    context.startActivity(settingsIntent)
   }
 }
