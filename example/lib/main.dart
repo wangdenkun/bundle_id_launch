@@ -16,53 +16,35 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
+
   final TextEditingController _textEditingController = TextEditingController();
   @override
   void initState() {
     super.initState();
-    initPlatformState();
-  }
-
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
-    String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    // We also handle the message potentially returning null.
-    try {
-      platformVersion =
-          await BundleIdLaunch.platformVersion ?? 'Unknown platform version';
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    setState(() {
-      _platformVersion = platformVersion;
-    });
   }
 
   Future<void> _launch() async{
     var bundleId = _textEditingController.text;
     if (bundleId.isEmpty) return;
     var res = await BundleIdLaunch.launch(bundleId: bundleId);
-    debugPrint('---> _MyAppState._launch res: ${res}');
+    debugPrint('---> _MyAppState._launch res: $res');
   }
   Future<void> _openSystemSetting() async{
     await BundleIdLaunch.openSystemSetting();
+  }
+  Future<void> _hasInstall() async{
+    var bundleId = _textEditingController.text;
+    var res = await BundleIdLaunch.hasInstall(bundleId: bundleId);
+    debugPrint('---> _MyAppState._hasInstall res: $res');
   }
 
   @override
   Widget build(BuildContext context) {
     // _textEditingController.text = 'com.alibaba.android.rimet';
-    // _textEditingController.text = 'com.choicewell.switcher_mobile';
+    // _textEditingController.text = 'ai.mushi.switcher';
     // _textEditingController.text = 'com.tencent.wemeet.controller';
-    _textEditingController.text = 'com.systec.umeeting.zrc';
-    // _textEditingController.text = 'us.zoom.zrc';
+    _textEditingController.text = 'us.zoom.zrc';
+    // _textEditingController.text = 'us.zoom.zrcc';
     //  TODO: rimet not work
     // _textEditingController.text = 'com.alibaba.android.rimet';
     return MaterialApp(
@@ -73,9 +55,6 @@ class _MyAppState extends State<MyApp> {
         body: SingleChildScrollView(
           child: Column(
             children: [
-              Center(
-                child: Text('Running on: $_platformVersion\n'),
-              ),
               ListTile(
                 leading: const Text('bundle id:'),
                 title: TextField(
@@ -92,7 +71,14 @@ class _MyAppState extends State<MyApp> {
                   onPressed: _openSystemSetting,
                   child: const Text('open'),
                 ),
-              )
+              ),
+              ListTile(
+                leading: const Text('hasInstall'),
+                trailing: TextButton(
+                  onPressed: _hasInstall,
+                  child: const Text('check'),
+                ),
+              ),
             ],
           ),
         ),
