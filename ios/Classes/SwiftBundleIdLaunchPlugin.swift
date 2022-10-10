@@ -12,11 +12,7 @@ public class SwiftBundleIdLaunchPlugin: NSObject, FlutterPlugin {
       if (call.method == "getPlatformVersion"){
           result("iOS " + UIDevice.current.systemVersion)
       }else if (call.method == "launch"){
-          if let bundleId = call.arguments as? String{
-              print("bundleId: ", bundleId);
-              let res = BundleIdLaunchPlugin.openApp(bundleId);
-              result(res);
-          }
+          result(false);
       }else if (call.method == "openSystemSetting"){
           guard let url = URL(string: UIApplication.openSettingsURLString) else {
               result(false)

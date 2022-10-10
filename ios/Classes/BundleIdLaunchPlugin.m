@@ -12,22 +12,4 @@
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
   [SwiftBundleIdLaunchPlugin registerWithRegistrar:registrar];
 }
-+ (BOOL)openApp:(NSString *)bundleId {
-    // 获取私有类名
-    NSString *classNameString = [[NSString alloc] initWithFormat:@"%@%@", @"LSApplicatio", @"nWorkspace"];
-    NSObject * workspace = [NSClassFromString(classNameString) new];
-
-    // 获取私有方法名
-    NSString *selNameString = [[NSString alloc] initWithFormat:@"%@%@", @"openApplication", @"WithBundleID:"];
-    SEL selector = NSSelectorFromString(selNameString);
-
-    IMP imp = [workspace methodForSelector:selector];
-
-    BOOL (*func)(id, SEL, NSString *) = (void *)imp;
-
-    BOOL result = workspace ?
-    func(workspace, selector, bundleId) : false;
-
-    return result;
-}
 @end

@@ -3,7 +3,8 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:bundle_id_launch/bundle_id_launch.dart';
-
+import 'package:url_launcher/url_launcher.dart';
+ 
 void main() {
   runApp(const MyApp());
 }
@@ -37,13 +38,17 @@ class _MyAppState extends State<MyApp> {
     var res = await BundleIdLaunch.hasInstall(bundleId: bundleId);
     debugPrint('---> _MyAppState._hasInstall res: $res');
   }
+  Future<bool> _launchiOSApp({required String url}) async{
+    return await BundleIdLaunch.launchByUrlScheme(url: url);
+  }
 
   @override
   Widget build(BuildContext context) {
     // _textEditingController.text = 'com.alibaba.android.rimet';
     // _textEditingController.text = 'ai.mushi.switcher';
     // _textEditingController.text = 'com.tencent.wemeet.controller';
-    _textEditingController.text = 'us.zoom.zrc';
+    // _textEditingController.text = 'us.zoom.zrc';
+    _textEditingController.text = 'com.bytedance.viewroom.controller';
     // _textEditingController.text = 'us.zoom.zrcc';
     //  TODO: rimet not work
     // _textEditingController.text = 'com.alibaba.android.rimet';
@@ -78,6 +83,30 @@ class _MyAppState extends State<MyApp> {
                   onPressed: _hasInstall,
                   child: const Text('check'),
                 ),
+              ),
+              ListTile(
+                leading: const Text('飞书 fs-controller://'),
+                onTap: (){
+                  _launchiOSApp(url: 'fs-controller://');
+                },
+              ),
+              ListTile(
+                leading: const Text('腾讯 tmrctrl://'),
+                onTap: (){
+                  _launchiOSApp(url: 'tmrctrl://');
+                },
+              ),
+              ListTile(
+                leading: const Text('umeet umeetrooms://'),
+                onTap: (){
+                  _launchiOSApp(url: 'umeetrooms://');
+                },
+              ),
+              ListTile(
+                leading: const Text('Zoom zoomrooms://'),
+                onTap: (){
+                  _launchiOSApp(url: 'zoomrooms://');
+                },
               ),
             ],
           ),
